@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a4a4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bootfitting">
+<title>SOS Bootfitting</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <img src="icons/logo.png" alt="SOS Sport" class="logo">
+  <h1>Bootfitting</h1>
+</header>
+
+<main id="view-list">
+  <button id="btn-new" class="primary big">+ Neue Aufnahme</button>
+  <h2>Entwürfe</h2>
+  <ul id="drafts" class="drafts"></ul>
+  <p class="hint">Entwürfe liegen nur auf diesem Gerät und werden nach <span id="draft-days"></span> Tagen automatisch gelöscht. Der Beleg ist die verschickte PDF.</p>
+  <p class="hint" id="ver"></p>
+</main>
+
+<main id="view-form" hidden>
+  <button id="btn-back" class="link">← Übersicht</button>
+
+  <section class="card">
+    <h2>Kunde</h2>
+    <label>Name<input data-bind="customer.name" autocomplete="off"></label>
+    <div class="row">
+      <label>Telefon<input data-bind="customer.phone" type="tel"></label>
+      <label>E-Mail<input data-bind="customer.email" type="email"></label>
+    </div>
+    <div class="row">
+      <label>Abholdatum<input data-bind="customer.pickup" type="date"></label>
+      <label>Fitter<select data-bind="fitter" id="fitter"></select></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Schuh</h2>
+    <div class="row">
+      <label>Marke<input data-bind="shoe.brand" list="brands" autocomplete="off"></label>
+      <label>Modell<input data-bind="shoe.model" autocomplete="off"></label>
+    </div>
+    <datalist id="brands"></datalist>
+    <label>Größe<input data-bind="shoe.size" autocomplete="off"></label>
+    <div class="seg" id="origin">
+      <button type="button" data-origin="shop">Bei uns gekauft</button>
+      <button type="button" data-origin="extern">Extern gekauft</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Fußschema</h2>
+    <div class="seg" id="foot-tabs">
+      <button type="button" data-foot="L">Links</button>
+      <button type="button" data-foot="R">Rechts</button>
+    </div>
+    <div class="seg" id="marker-types"></div>
+    <p class="hint">Marker wählen und ins Schema tippen.</p>
+    <div class="schema">
+      <div id="svg-top" class="svgbox top"></div>
+      <div id="svg-side" class="svgbox side"></div>
+    </div>
+    <ul id="marks" class="marks"></ul>
+  </section>
+
+  <section class="card">
+    <h2>Maßnahmen</h2>
+    <div id="measures"></div>
+    <div id="total" class="total" hidden></div>
+  </section>
+
+  <section class="card">
+    <h2>Fotos</h2>
+    <div class="row btns">
+      <button type="button" class="secondary" id="btn-cam">Foto aufnehmen</button>
+      <button type="button" class="secondary" id="btn-gal">Aus Galerie</button>
+    </div>
+    <input type="file" id="in-cam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="in-gal" accept="image/*" multiple hidden>
+    <ul id="photos" class="photos"></ul>
+  </section>
+
+  <section class="card">
+    <h2>Notizen</h2>
+    <textarea data-bind="notes" rows="4"></textarea>
+  </section>
+
+  <div class="bar">
+    <button class="primary" id="btn-send">PDF senden</button>
+    <button class="secondary" id="btn-print">Drucken</button>
+  </div>
+</main>
+
+<dialog id="dlg-sent">
+  <p><strong>Wurde die PDF verschickt?</strong></p>
+  <p class="hint">Bei „Ja“ wird der Fall mit allen Fotos von diesem Gerät gelöscht.</p>
+  <div class="row btns">
+    <button class="primary" id="sent-yes">Ja, löschen</button>
+    <button class="secondary" id="sent-no">Nein, behalten</button>
+  </div>
+</dialog>
+
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="foot.js"></script>
+<script src="store.js"></script>
+<script src="pdf.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
