@@ -1,6 +1,8 @@
-// Fußschema als SVG-String. Wird in der App angezeigt und fürs PDF in PNG gewandelt.
+// Fußschema als SVG-String (Innen- und Außenseite je Fuß). Wird in der App angezeigt und fürs PDF in PNG gewandelt.
 const Foot = {
-  VB: { top: [120, 290], side: [300, 190] },
+  VIEWS: ['top', 'inner', 'outer'],
+  VIEW_LABEL: { top: 'Draufsicht', inner: 'Innenseite', outer: 'Außenseite' },
+  VB: { top: [120, 290], inner: [300, 190], outer: [300, 190] },
 
   marker(type, x, y, n) {
     const t = CONFIG.markerTypes.find(m => m.id === type) || CONFIG.markerTypes[0];
@@ -18,6 +20,7 @@ const Foot = {
   svg(view, foot, marks, opts = {}) {
     const [w, h] = this.VB[view];
     const f = 'font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#666"';
+    const side = foot === 'L' ? 'links' : 'rechts';
     let body;
     if (view === 'top') {
       const mirror = foot === 'L' ? ' transform="translate(120,0) scale(-1,1)"' : '';
@@ -34,12 +37,19 @@ const Foot = {
       <text x="${innerX}" y="150" text-anchor="middle" transform="rotate(${foot === 'R' ? -90 : 90} ${innerX} 150)" ${f}>Innen</text>
       <text x="${outerX}" y="150" text-anchor="middle" transform="rotate(${foot === 'R' ? 90 : -90} ${outerX} 150)" ${f}>Außen</text>`;
     } else {
-      body = `<g fill="#f4f4f4" stroke="#333" stroke-width="2" stroke-linejoin="round">
+      const inner = view === 'inner';
+      // Rechter Fuß innen und linker Fuß außen zeigen die Zehen nach rechts, die anderen beiden nach links.
+      const toesRight = (foot === 'R') === inner;
+      const mirror = toesRight ? '' : ` transform="translate(${w},0) scale(-1,1)"`;
+      const ankleY = inner ? 122 : 134;
+      const arch = inner ? '<path d="M70 164 C110 140 150 140 200 164" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/>' : '';
+      body = `<g${mirror} fill="#f4f4f4" stroke="#333" stroke-width="2" stroke-linejoin="round">
         <path d="M40 150 C36 120 34 100 40 85 L46 14 L120 14 C122 48 124 62 130 70 C160 76 195 90 225 108 C250 118 262 130 262 146 C262 158 252 164 240 164 L62 164 C48 164 41 160 40 150 Z"/>
-        <circle cx="82" cy="128" r="10" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <circle cx="82" cy="${ankleY}" r="10" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/>${arch}
       </g>
-      <text x="40" y="182" ${f}>Ferse</text>
-      <text x="262" y="182" text-anchor="end" ${f}>Zehen</text>`;
+      <text x="${toesRight ? 40 : 260}" y="182" text-anchor="${toesRight ? 'start' : 'end'}" ${f}>Ferse</text>
+      <text x="${toesRight ? 262 : 38}" y="182" text-anchor="${toesRight ? 'end' : 'start'}" ${f}>Zehen</text>
+      <text x="150" y="182" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="700" fill="#333">${this.VIEW_LABEL[view]} · ${side}</text>`;
     }
     const mine = marks.filter(m => m.foot === foot);
     const pins = mine.map((m, i) => m.view === view ? this.marker(m.type, m.x, m.y, i + 1) : '').join('');

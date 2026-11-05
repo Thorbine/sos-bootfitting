@@ -43,6 +43,7 @@ async function showList() {
 
 function openCase(d, isNew) {
   c = d; persisted = !isNew;
+  c.marks = c.marks.filter(m => Foot.VIEWS.includes(m.view)); // Markierungen der früheren Ansichten (oben/seitlich) entfallen
   curFoot = 'L';
   $('#view-list').hidden = true; $('#view-form').hidden = false;
   window.scrollTo(0, 0);
@@ -66,14 +67,13 @@ function renderTypes() {
     `<button type="button" data-type="${t.id}" class="${t.id === curType ? 'on' : ''}">${t.label}</button>`).join('');
 }
 function renderSchema() {
-  $('#svg-top').innerHTML = Foot.svg('top', curFoot, c.marks);
-  $('#svg-side').innerHTML = Foot.svg('side', curFoot, c.marks);
+  for (const v of Foot.VIEWS) $('#svg-' + v).innerHTML = Foot.svg(v, curFoot, c.marks);
 }
 function renderMarks() {
   const names = Object.fromEntries(CONFIG.markerTypes.map(t => [t.id, t.label]));
   const mine = c.marks.filter(m => m.foot === curFoot);
   $('#marks').innerHTML = mine.map((m, i) => `
-    <li><span class="n">${i + 1}</span><input data-mnote="${m.id}" value="${esc(m.note)}" placeholder="${names[m.type]} (${m.view === 'top' ? 'oben' : 'seitlich'}) – Notiz">
+    <li><span class="n">${i + 1}</span><input data-mnote="${m.id}" value="${esc(m.note)}" placeholder="${names[m.type]} (${{ top: 'oben', inner: 'innen', outer: 'außen' }[m.view]}) – Notiz">
     <button data-mdel="${m.id}">✕</button></li>`).join('');
 }
 function addMark(view, ev) {
@@ -142,7 +142,7 @@ async function makePdf() {
   const lg = await img('icons/logo.png');
   const logoData = await fetch('icons/logo.png').then(r => r.blob()).then(b => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); }));
   const assets = { logo: { data: logoData, ...lg }, schema: {} };
-  for (const foot of ['L', 'R']) for (const v of ['top', 'side']) {
+  for (const foot of ['L', 'R']) for (const v of Foot.VIEWS) {
     if (!c.marks.some(m => m.foot === foot && m.view === v)) continue;
     const [w, h] = Foot.VB[v];
     assets.schema[`${foot}-${v}`] = { data: await Foot.toPng(Foot.svg(v, foot, c.marks, { export: true }), w, h), w, h };
@@ -195,8 +195,7 @@ document.addEventListener('click', async e => {
   else if (t.id === 'sent-no') $('#dlg-sent').close();
 });
 
-$('#svg-top').addEventListener('click', e => addMark('top', e));
-$('#svg-side').addEventListener('click', e => addMark('side', e));
+for (const v of Foot.VIEWS) $('#svg-' + v).addEventListener('click', e => addMark(v, e));
 
 for (const id of ['in-cam', 'in-gal']) $('#' + id).addEventListener('change', e => { addPhotos([...e.target.files]); e.target.value = ''; });
 

@@ -29,10 +29,9 @@ button.link { background:none; color:var(--gray); padding:4px 0 12px; font-weigh
 .drafts .info { flex:1; cursor:pointer; }
 .drafts .info small { display:block; color:#777; }
 .drafts button { background:#eee; padding:8px 12px; }
-.schema { display:flex; gap:12px; align-items:flex-start; }
+.schema { display:grid; grid-template-columns:34% 1fr; gap:12px; align-items:start; }
+.sides { display:grid; gap:12px; }
 .svgbox svg { width:100%; height:auto; display:block; touch-action:manipulation; background:#fff; border:1px solid var(--line); border-radius:8px; }
-.svgbox.top { flex:0 0 32%; }
-.svgbox.side { flex:1; }
 .marks { list-style:none; padding:0; margin:12px 0 0; }
 .marks li { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
 .marks .n { font-weight:700; width:22px; }

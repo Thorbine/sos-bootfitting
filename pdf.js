@@ -101,24 +101,25 @@ const Pdf = {
       for (const foot of ['L', 'R']) {
         const mine = c.marks.filter(m => m.foot === foot);
         if (!mine.length) continue;
-        const views = ['top', 'side'].filter(v => mine.some(m => m.view === v));
-        const rowH = 68;
-        ensure(rowH);
+        ensure(78);
         text(foot === 'L' ? 'Linker Fuß' : 'Rechter Fuß', M, y, { bold: true });
-        let x = M, top = y + 3;
-        for (const v of views) {
+        let x = M, top = y + 3, maxH = 0;
+        for (const v of Foot.VIEWS.filter(v => mine.some(m => m.view === v))) {
           const a = assets.schema[`${foot}-${v}`];
-          const iw = v === 'top' ? 24 : 70, ih = iw * a.h / a.w;
+          const iw = v === 'top' ? 28 : 75, ih = iw * a.h / a.w;
           doc.addImage(a.data, 'PNG', x, top, iw, ih);
-          x += iw + 4;
+          doc.setDrawColor(210); doc.rect(x, top, iw, ih);
+          x += iw + 4; maxH = Math.max(maxH, ih);
         }
         const names = Object.fromEntries(CONFIG.markerTypes.map(t => [t.id, t.label]));
-        let ty = top + 3;
+        const where = { top: 'oben', inner: 'innen', outer: 'außen' };
+        y = top + maxH + 5;
         mine.forEach((m, i) => {
-          const s = doc.splitTextToSize(`${i + 1}  ${names[m.type]}${m.note ? ' – ' + m.note : ''}`, R - x);
-          text(s, x, ty, { size: 9 }); ty += s.length * 4.2;
+          ensure(5);
+          text(`${i + 1}  ${names[m.type]} (${where[m.view]})${m.note ? ' – ' + m.note : ''}`, M, y, { size: 9 });
+          y += 4.6;
         });
-        y += rowH;
+        y += 4;
       }
     }
 

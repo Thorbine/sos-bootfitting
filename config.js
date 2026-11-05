@@ -1,6 +1,6 @@
 // Zentrale Konfiguration. Änderungen hier (Preise, Maßnahmen, Fitter) per Push auf GitHub ausrollen.
 window.CONFIG = {
-  version: '0.1.0',
+  version: '0.2.0',
   shop: 'SOS Sport Braunschweig',
   draftDays: 14,
 
