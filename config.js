@@ -1,6 +1,6 @@
 // Zentrale Konfiguration. Änderungen hier (Preise, Maßnahmen, Fitter) per Push auf GitHub ausrollen.
 window.CONFIG = {
-  version: '0.2.0',
+  version: '0.2.1',
   shop: 'SOS Sport Braunschweig',
   draftDays: 14,
 
@@ -35,10 +35,6 @@ window.CONFIG = {
       { id: 'fersenunterbau', name: 'Fersenunterbau unter Einlegesohle', unit: 'pro Paar', kind: 'paar', price: 15 },
       { id: 'reduziersohle', name: 'Reduziersohle einbauen', unit: 'pro Paar', kind: 'paar', price: 12 },
       { id: 'zunge', name: 'Zunge im Radius verändern', unit: '', kind: 'paar', price: 40 }
-    ] },
-    { group: 'Werkstatt', items: [
-      { id: 'sohlenplatten', name: 'Sohlenplatten austauschen', unit: 'pro Paar', kind: 'paar', price: 35 },
-      { id: 'schnalle', name: 'Schnallenreparatur', unit: 'pro Schnalle', kind: 'schnalle', price: 35 }
     ] }
   ]
 };

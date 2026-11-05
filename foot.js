@@ -38,8 +38,8 @@ const Foot = {
       <text x="${outerX}" y="150" text-anchor="middle" transform="rotate(${foot === 'R' ? 90 : -90} ${outerX} 150)" ${f}>Außen</text>`;
     } else {
       const inner = view === 'inner';
-      // Rechter Fuß innen und linker Fuß außen zeigen die Zehen nach rechts, die anderen beiden nach links.
-      const toesRight = (foot === 'R') === inner;
+      // Rechter Fuß außen und linker Fuß innen zeigen die Zehen nach rechts, die anderen beiden nach links.
+      const toesRight = (foot === 'R') !== inner;
       const mirror = toesRight ? '' : ` transform="translate(${w},0) scale(-1,1)"`;
       const ankleY = inner ? 122 : 134;
       const arch = inner ? '<path d="M70 164 C110 140 150 140 200 164" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/>' : '';
