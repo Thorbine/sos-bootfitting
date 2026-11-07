@@ -150,12 +150,22 @@ async function makePdf() {
   return Pdf.build(c, assets);
 }
 
+// Legt den Fall im Shop-Archiv ab (PC-Programm, gleiche Adresse wie die App). Teilen klappt auch ohne.
+async function archive(doc) {
+  try {
+    const pdf = doc.output('datauristring').split(',')[1];
+    const r = await fetch('api/cases', { method: 'POST', body: JSON.stringify({ fall: c, pdf }) });
+    if (!r.ok) throw new Error(r.status);
+  } catch (e) { alert('Shop-Archiv nicht erreichbar (WLAN?). Der PDF-Versand läuft trotzdem.'); }
+}
+
 async function sendPdf() {
   const btn = $('#btn-send'); btn.disabled = true;
   try {
     const doc = await makePdf(); if (!doc) return;
     const name = Calc.fileName(c);
     const file = new File([doc.output('blob')], name, { type: 'application/pdf' });
+    await archive(doc);
     const title = `Bootfitting ${c.customer.name} – Abholung ${Calc.date(c.customer.pickup)}`;
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try { await navigator.share({ files: [file], title, text: title }); }
